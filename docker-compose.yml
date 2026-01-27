@@ -1,0 +1,43 @@
+services:
+  database:
+    image: postgres:16
+    container_name: groq-database
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5543:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - groq_network
+
+  prod-mode:
+    container_name: prod-mode_groq
+    restart: unless-stopped
+    build:
+      target: prod
+      context: .
+    ports:
+      - "3003:3000"
+    environment:
+    - VAULT_ADDR=${VAULT_ADDR}
+    - VAULT_TOKEN=${VAULT_TOKEN}
+    - VAULT_KV_MOUNT=${VAULT_KV_MOUNT}
+    - VAULT_JWT_GROQ_API_PATH=${VAULT_JWT_GROQ_API_PATH}
+    - VAULT_GROQ_API_PATH=${VAULT_GROQ_API_PATH}
+    - BCRYPT_SALT_ROUNDS=${BCRYPT_SALT_ROUNDS}
+    - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - database
+    networks:
+      - groq_network
+
+volumes:
+  pgdata:
+
+networks:
+  groq_network:
+    driver: bridge
