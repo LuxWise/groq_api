@@ -40,3 +40,19 @@ model api_keys {
 
   user users @relation(fields: [userId], references: [id])
 }
+
+model api_logs {
+  id        Int      @id @default(autoincrement())
+  level     String
+  operation String
+  message   String
+  httpMethod String?
+  httpUrl    String?
+  requestHeaders String
+  requestBody    String?
+  responseStatus  String?
+  responseHeaders String?
+  responseBody    String?
+  responseTime  String?
+  createdAt DateTime @default(now())
+}
