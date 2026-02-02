@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
@@ -15,8 +16,14 @@ model users {
   password String
   firstname  String?
   lastname   String?
+  roleId   String
   ia_usages ia_usage[]
   api_keys  api_keys[]
+}
+
+model role {
+  id    String     @id @default(uuid())
+  name  String @unique
 }
 
 model ia_usage {

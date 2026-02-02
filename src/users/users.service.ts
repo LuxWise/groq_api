@@ -13,7 +13,7 @@ export class UsersService {
         private readonly encryptPasswordUtil: EncryptPasswordUtil,
         private readonly persistence: PersistenceService,
         private readonly apiKeyService: ApiKeyService
-    ) {}
+    ) { }
 
     async createUser(data: InputCreateUser): Promise<OutputCreateUser> {
         const userExists = await this.findUserByEmail(data.email);
@@ -21,12 +21,21 @@ export class UsersService {
             throw new HttpException('User with this email already exists', 400);
         }
 
+        const role = await this.persistence.role.findUnique({
+            where: { name: 'user' }
+        });
+
+        if (!role) {
+            throw new HttpException('Default user role not found', 500);
+        }
+
         const user = await this.persistence.users.create({
             data: {
                 email: data.email,
                 password: await this.encryptPasswordUtil.encryptPassword(data.password),
                 firstname: data.firstname,
-                lastname: data.lastname
+                lastname: data.lastname,
+                roleId: role.id
             }
         })
 
@@ -47,12 +56,21 @@ export class UsersService {
             throw new HttpException('User with this email already exists', 400);
         }
 
+        const role = await this.persistence.role.findUnique({
+            where: { name: 'external' }
+        });
+
+        if (!role) {
+            throw new HttpException('Default external user role not found', 500);
+        }
+
         const user = await this.persistence.users.create({
             data: {
                 email: data.email,
                 password: data.password,
                 firstname: data.firstname,
-                lastname: data.lastname
+                lastname: data.lastname,
+                roleId: role.id
             }
         })
 
@@ -66,7 +84,7 @@ export class UsersService {
             status: 'success',
             message: 'External user created successfully',
             userId: user.id,
-            api_key: key
+            api_key: key,
         }
     }
 
