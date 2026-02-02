@@ -18,7 +18,13 @@ export class UsersService {
     ) { }
     
     async createUser(data: InputCreateUser): Promise<OutputCreateUser> {
-        const userExists = await this.findUserByEmail(data.email, 'user');
+        const userReq = this.req.user;
+        const userGrant =  await this.findUserByEmail(userReq.email, 'admin');
+        if (!userGrant) {
+            throw new HttpException('Unauthorized to create user', 403);
+        }
+
+        const userExists = await this.findUserByEmail(data.email);
         if (userExists) {
             throw new HttpException('User with this email already exists', 400);
         }
@@ -90,13 +96,19 @@ export class UsersService {
         }
     }
 
-    async findUserByEmail(email: string, role?: 'user' | 'external') {
+    async findUserByEmail(email: string, role?: 'admin' | 'user' | 'external') {
         return this.persistence.users.findUnique({
             where: { email, roleId: role ? undefined : undefined },
         });
     }
 
     async findAllUsers() {
+        const userReq = this.req.user;
+        const userGrant =  await this.findUserByEmail(userReq.email, 'admin');
+        if (!userGrant) {
+            throw new HttpException('Unauthorized to view users', 403);
+        }
+
         return this.persistence.users.findMany();
     }
 }
