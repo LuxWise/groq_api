@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { VaultModule } from '../vault/vault.module';
 import { ApiKeyModule } from '../api-key/api-key.module';
 import { EncryptModule } from '../encrypt/encrypt.module';
+import { LoggingModule } from '../logging/logging.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { EncryptModule } from '../encrypt/encrypt.module';
     JwtModule,
     VaultModule,
     ApiKeyModule,
-    EncryptModule
+    EncryptModule,
+    LoggingModule
   ],
   providers: [CvService],
   controllers: [CvController]

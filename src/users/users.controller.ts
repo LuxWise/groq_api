@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { OutputCreateUser } from './types/output-create-user.types';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -8,7 +8,9 @@ import { AuthGuardExternal } from '../auth/guard/auth-external.guard';
 import { InputCreateExternalUser } from './types/input-create-external-user.types';
 import { OutputCreateExternalUser } from './types/output-create-external-user.types';
 import { CreateExternalUserDto } from './dto/create-external-user.dto';
+import { LogsInterceptor } from '../shared/logs.interceptor';
 
+@UseInterceptors(LogsInterceptor)
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}

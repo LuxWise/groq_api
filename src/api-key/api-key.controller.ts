@@ -1,11 +1,13 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiKeyService } from './api-key.service';
 import { CreateApiKeyDto } from './dto/create-api-key.dto';
 import { InputCreateApiKey } from './types/input-create-api-key.types';
 import { RevokeApiKeyDto } from './dto/revoke-api-key.dto';
 import { InputRevokeApiKey } from './types/input-revoke-api-key.types';
 import { AuthGuardInternal } from '../auth/guard/auth-internal.guard';
+import { LogsInterceptor } from '../shared/logs.interceptor';
 
+@UseInterceptors(LogsInterceptor)
 @UseGuards(AuthGuardInternal)
 @Controller('api-key')
 export class ApiKeyController {

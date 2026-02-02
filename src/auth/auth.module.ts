@@ -9,6 +9,7 @@ import { ApiKeyModule } from '../api-key/api-key.module';
 import { VaultModule } from '../vault/vault.module';
 import { AuthGuardInternal } from './guard/auth-internal.guard';
 import { AuthGuardExternal } from './guard/auth-external.guard';
+import { LoggingModule } from '../logging/logging.module';
 
 @Module({
     imports: [
@@ -17,6 +18,7 @@ import { AuthGuardExternal } from './guard/auth-external.guard';
         ApiKeyModule,
         EncryptModule,
         VaultModule,
+        LoggingModule
     ],
     providers: [AuthGuardInternal, AuthGuardExternal, AuthService, CompareUtil],
     controllers: [AuthController],

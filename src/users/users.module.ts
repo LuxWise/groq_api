@@ -6,13 +6,15 @@ import { EncryptPasswordUtil } from './utils/encrypt-password.util';
 import { JwtModule } from '@nestjs/jwt';
 import { VaultModule } from '../vault/vault.module';
 import { ApiKeyModule } from '../api-key/api-key.module';
+import { LoggingModule } from '../logging/logging.module';
 
 @Module({
   imports: [
     PersistenceModule,
     JwtModule,
     VaultModule,
-    ApiKeyModule
+    ApiKeyModule,
+    LoggingModule
   ],
   providers: [EncryptPasswordUtil, UsersService],
   controllers: [UsersController],
