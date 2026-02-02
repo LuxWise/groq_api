@@ -97,8 +97,16 @@ export class UsersService {
     }
 
     async findUserByEmail(email: string, role?: 'admin' | 'user' | 'external') {
+        let roleId;
+        
+        if (role) {
+            roleId = await this.persistence.role.findUnique({
+                where: { name: role }
+            })
+        }
+
         return this.persistence.users.findUnique({
-            where: { email, roleId: role ? undefined : undefined },
+            where: { email, roleId: roleId ? roleId.id : undefined },
         });
     }
 
