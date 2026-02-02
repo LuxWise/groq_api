@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { createHmac, randomBytes } from 'crypto';
 import { PersistenceService } from '../persistence/persistence.service';
 import { InputCreateApiKey } from './types/input-create-api-key.types';

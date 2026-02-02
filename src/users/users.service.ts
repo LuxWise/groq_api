@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable, UseGuards } from '@nestjs/common';
 import { PersistenceService } from '../persistence/persistence.service';
 import { InputCreateUser } from './types/input-create-user.types';
 import { OutputCreateUser } from './types/output-create-user.types';
@@ -6,17 +6,19 @@ import { EncryptPasswordUtil } from './utils/encrypt-password.util';
 import { ApiKeyService } from '../api-key/api-key.service';
 import { InputCreateExternalUser } from './types/input-create-external-user.types';
 import { OutputCreateExternalUser } from './types/output-create-external-user.types';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class UsersService {
     constructor(
+        @Inject(REQUEST) private readonly req: any,
         private readonly encryptPasswordUtil: EncryptPasswordUtil,
         private readonly persistence: PersistenceService,
         private readonly apiKeyService: ApiKeyService
     ) { }
-
+    
     async createUser(data: InputCreateUser): Promise<OutputCreateUser> {
-        const userExists = await this.findUserByEmail(data.email);
+        const userExists = await this.findUserByEmail(data.email, 'user');
         if (userExists) {
             throw new HttpException('User with this email already exists', 400);
         }
@@ -51,7 +53,7 @@ export class UsersService {
     }
 
     async createExternalUser(data: InputCreateExternalUser): Promise<OutputCreateExternalUser> {
-        const userExists = await this.findUserByEmail(data.email);
+        const userExists = await this.findUserByEmail(data.email, 'external');
         if (userExists) {
             throw new HttpException('User with this email already exists', 400);
         }
@@ -88,9 +90,9 @@ export class UsersService {
         }
     }
 
-    async findUserByEmail(email: string) {
+    async findUserByEmail(email: string, role?: 'user' | 'external') {
         return this.persistence.users.findUnique({
-            where: { email }
+            where: { email, roleId: role ? undefined : undefined },
         });
     }
 
